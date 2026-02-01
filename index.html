@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مدرسة الحروف الناطقة</title>
+    <style>
+        :root {
+            --primary: #ff6f61;
+            --secondary: #4ca1af;
+            --bg: #fdfbfb;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .header {
+            background: linear-gradient(135deg, #ffedbc, #ff6f61);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        h1 { color: #fff; text-shadow: 2px 2px #d35400; margin: 0; font-size: 2.5em; }
+        p { font-size: 1.2em; color: #444; }
+
+        .instruction {
+            background: #e1f5fe;
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            border: 1px dashed #0288d1;
+        }
+
+        .letters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .letter-card {
+            background: white;
+            border: 4px solid #f0f0f0;
+            border-radius: 15px;
+            font-size: 3em;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            color: #2c3e50;
+        }
+
+        .letter-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+            background-color: #e0f2f1;
+        }
+
+        .letter-card:active {
+            transform: scale(0.9);
+        }
+
+        /* تمييز الألوان حسب المجموعات */
+        .color-1 { border-color: #ffadad; }
+        .color-2 { border-color: #ffd6a5; }
+        .color-3 { border-color: #fdffb6; }
+        .color-4 { border-color: #caffbf; }
+
+        .footer { margin-top: 50px; color: #888; border-top: 1px solid #eee; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ألف باء تاء.. حرفي ناطق! 🎙️</h1>
+        <p>اضغط على الحرف لتسمع صوته بوضوح</p>
+    </div>
+
+    <div class="instruction">
+        💡 نصيحة: تأكد من رفع مستوى الصوت في جهازك!
+    </div>
+
+    <div class="letters-grid">
+        <div class="letter-card color-1" onclick="speak('ألف')">أ</div>
+        <div class="letter-card color-1" onclick="speak('باء')">ب</div>
+        <div class="letter-card color-1" onclick="speak('تاء')">ت</div>
+        <div class="letter-card color-1" onclick="speak('ثاء')">ث</div>
+        <div class="letter-card color-2" onclick="speak('جيم')">ج</div>
+        <div class="letter-card color-2" onclick="speak('حاء')">ح</div>
+        <div class="letter-card color-2" onclick="speak('خاء')">خ</div>
+        <div class="letter-card color-3" onclick="speak('دال')">د</div>
+        <div class="letter-card color-3" onclick="speak('ذال')">ذ</div>
+        <div class="letter-card color-3" onclick="speak('راء')">ر</div>
+        <div class="letter-card color-3" onclick="speak('زاي')">ز</div>
+        <div class="letter-card color-4" onclick="speak('سين')">س</div>
+        <div class="letter-card color-4" onclick="speak('شين')">ش</div>
+        <div class="letter-card color-4" onclick="speak('صاد')">ص</div>
+        <div class="letter-card color-4" onclick="speak('ضاد')">ض</div>
+        <div class="letter-card color-1" onclick="speak('طاء')">ط</div>
+        <div class="letter-card color-1" onclick="speak('ظاء')">ظ</div>
+        <div class="letter-card color-1" onclick="speak('عين')">ع</div>
+        <div class="letter-card color-1" onclick="speak('غين')">غ</div>
+        <div class="letter-card color-2" onclick="speak('فاء')">ف</div>
+        <div class="letter-card color-2" onclick="speak('قاف')">ق</div>
+        <div class="letter-card color-2" onclick="speak('كاف')">ك</div>
+        <div class="letter-card color-2" onclick="speak('لام')">ل</div>
+        <div class="letter-card color-3" onclick="speak('ميم')">م</div>
+        <div class="letter-card color-3" onclick="speak('نون')">ن</div>
+        <div class="letter-card color-3" onclick="speak('هاء')">هـ</div>
+        <div class="letter-card color-3" onclick="speak('واو')">و</div>
+        <div class="letter-card color-3" onclick="speak('ياء')">ي</div>
+    </div>
+
+    <div class="footer">
+        مدرسة الطفل الذكي - تعلم القراءة والمرح 🌟
+    </div>
+
+    <script>
+        function speak(text) {
+            // إلغاء أي حديث جارٍ لتجنب تداخل الأصوات
+            window.speechSynthesis.cancel();
+            
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = text;
+            msg.lang = 'ar-SA'; // لغة عربية
+            msg.rate = 0.8;    // سرعة النطق (جعلناها أبطأ قليلاً ليفهم الطفل)
+            msg.pitch = 1.2;   // طبقة الصوت (جعلناها طفولية أكثر)
+            
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+
+</body>
+</html>
