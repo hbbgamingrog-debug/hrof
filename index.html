@@ -2,31 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>مدرسة الحروف الناطقة</title>
+    <title>مدرسة الحروف - نسخة GitHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #eef2f3; text-align: center; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 8px solid #FF9800; }
-        
-        /* شاشة الاختيار */
-        #setup-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-        .selection-box { background: white; padding: 40px; border-radius: 30px; text-align: center; }
-        .gender-btn { font-size: 1.5em; padding: 20px 40px; margin: 10px; border: none; border-radius: 20px; cursor: pointer; transition: 0.3s; color: white; }
-        .boy { background: #2196F3; }
-        .girl { background: #E91E63; }
-        
-        .quiz-section { background: #FFF3E0; padding: 20px; border-radius: 20px; margin-bottom: 30px; border: 3px dashed #FF9800; }
-        #question-label { font-size: 2em; color: #333; margin-bottom: 15px; display: block; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; }
-        .letter-btn { 
-            background: #fff; border: 4px solid #FFCC80; border-radius: 20px; 
-            font-size: 3.5em; padding: 10px; cursor: pointer; transition: 0.2s;
-            box-shadow: 0 8px 0 #FFCC80; color: #333; height: 120px; display: flex; align-items: center; justify-content: center;
-        }
-        .correct { background-color: #4CAF50 !important; color: white !important; box-shadow: 0 8px 0 #1B5E20 !important; }
-        .wrong { background-color: #f44336 !important; color: white !important; box-shadow: 0 8px 0 #7f0000 !important; }
-        .btn-main { background: #4CAF50; color: white; border: none; padding: 15px 40px; font-size: 1.3em; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 #2E7D32; font-family: 'Cairo', sans-serif; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 40px; border: 8px solid #FF9800; }
+        #setup-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+        .selection-box { background: white; padding: 40px; border-radius: 30px; }
+        .gender-btn { font-size: 1.5em; padding: 15px 30px; margin: 10px; border: none; border-radius: 20px; cursor: pointer; color: white; }
+        .boy { background: #2196F3; } .girl { background: #E91E63; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-top: 20px; }
+        .letter-btn { background: #fff; border: 4px solid #FFCC80; border-radius: 15px; font-size: 2.5em; padding: 10px; cursor: pointer; box-shadow: 0 5px 0 #FFCC80; }
+        .correct { background-color: #4CAF50 !important; color: white; }
+        .wrong { background-color: #f44336 !important; color: white; }
+        .btn-main { background: #4CAF50; color: white; border: none; padding: 15px 40px; font-size: 1.3em; border-radius: 50px; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -41,17 +30,14 @@
 
     <div class="container">
         <h1 id="welcome-msg">مدرسة الحروف 📢</h1>
-        
-        <div class="quiz-section">
-            <span id="question-label">اضغط "ابدأ" للعب</span>
-            <button class="btn-main" onclick="nextQuestion()">ابدأ الاختبار 🎮</button>
-        </div>
-
+        <div id="question-label" style="font-size: 1.5em; color: #333;">اضغط "ابدأ" للعب</div>
+        <button class="btn-main" onclick="nextQuestion()">ابدأ الاختبار 🎮</button>
         <div class="grid" id="alphabetGrid"></div>
     </div>
 
     <script>
-        let userGender = 'boy'; // افتراضي
+        let userGender = 'boy';
+        let target = null;
         const lettersData = [
             {id: 'أ', voice: 'ألف'}, {id: 'ب', voice: 'باء'}, {id: 'ت', voice: 'تاء'}, 
             {id: 'ث', voice: 'ثاء'}, {id: 'ج', voice: 'جيم'}, {id: 'ح', voice: 'حاء'},
@@ -64,56 +50,61 @@
             {id: 'ن', voice: 'نون'}, {id: 'هـ', voice: 'هاء'}, {id: 'و', voice: 'واو'}, {id: 'ي', voice: 'ياء'}
         ];
 
-        let target = null;
-        const grid = document.getElementById('alphabetGrid');
-
-        lettersData.forEach(item => {
-            const btn = document.createElement('div');
-            btn.className = 'letter-btn';
-            btn.innerText = item.id;
-            btn.onclick = () => checkChoice(item, btn);
-            grid.appendChild(btn);
-        });
-
-        function playExternalAudio(text) {
-            const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=ar&client=tw-ob`;
-            const audio = new Audio(url);
-            audio.play();
+        // وظيفة النطق المتوافقة مع GitHub والمتصفحات
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'ar-SA';
+            msg.rate = 0.8;
+            
+            // محاولة اختيار صوت عربي إذا توفر
+            const voices = window.speechSynthesis.getVoices();
+            const arVoice = voices.find(v => v.lang.includes('ar'));
+            if (arVoice) msg.voice = arVoice;
+            
+            window.speechSynthesis.speak(msg);
         }
+
+        // تحميل الأصوات مسبقاً
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
 
         function setGender(type) {
             userGender = type;
             document.getElementById('setup-screen').style.display = 'none';
             const greet = type === 'boy' ? "أهلاً بك يا بطل" : "أهلاً بكِ يا بطلة";
             document.getElementById('welcome-msg').innerText = greet;
-            playExternalAudio(greet + ". هيا نتعلم الحروف");
+            speak(greet + ". هيا نتعلم الحروف");
         }
+
+        const grid = document.getElementById('alphabetGrid');
+        lettersData.forEach(item => {
+            const btn = document.createElement('div');
+            btn.className = 'letter-btn';
+            btn.innerText = item.id;
+            btn.onclick = () => {
+                if(!target) speak(item.voice);
+                else checkChoice(item, btn);
+            };
+            grid.appendChild(btn);
+        });
 
         function nextQuestion() {
             document.querySelectorAll('.letter-btn').forEach(b => b.classList.remove('correct', 'wrong'));
-            const randomIndex = Math.floor(Math.random() * lettersData.length);
-            target = lettersData[randomIndex];
-            
-            const qPrefix = userGender === 'boy' ? "يا بطل أين حرف " : "يا بطلة أين حرف ";
+            target = lettersData[Math.floor(Math.random() * lettersData.length)];
+            const q = (userGender === 'boy' ? "يا بطل أين حرف " : "يا بطلة أين حرف ") + target.voice;
             document.getElementById('question-label').innerText = "أين حرف: " + target.id;
-            playExternalAudio(qPrefix + target.voice);
+            speak(q);
         }
 
         function checkChoice(item, element) {
-            if (!target) {
-                playExternalAudio(item.voice);
-                return;
-            }
-
             if (item.id === target.id) {
                 element.classList.add('correct');
-                const winMsg = userGender === 'boy' ? "أحسنت يا بطل" : "أحسنتِ يا بطلة";
-                playExternalAudio(winMsg);
+                speak(userGender === 'boy' ? "أحسنت يا بطل" : "أحسنتِ يا بطلة");
                 target = null;
                 setTimeout(nextQuestion, 2000);
             } else {
                 element.classList.add('wrong');
-                playExternalAudio("حاول مرة أخرى");
+                speak("حاول مرة أخرى");
                 setTimeout(() => element.classList.remove('wrong'), 500);
             }
         }
